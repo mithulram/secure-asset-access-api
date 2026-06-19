@@ -43,9 +43,9 @@ public class SecurityConfig {
     @Bean
     UserDetailsService users(
             PasswordEncoder passwordEncoder,
-            @Value("${asset-access.demo.admin-password:demo-admin-change-me}") String adminPassword,
-            @Value("${asset-access.demo.operator-password:demo-operator-change-me}") String operatorPassword,
-            @Value("${asset-access.demo.viewer-password:demo-viewer-change-me}") String viewerPassword) {
+            @Value("${asset-access.demo.admin-password}") String adminPassword,
+            @Value("${asset-access.demo.operator-password}") String operatorPassword,
+            @Value("${asset-access.demo.viewer-password}") String viewerPassword) {
         return new InMemoryUserDetailsManager(
                 User.withUsername("admin").password(passwordEncoder.encode(adminPassword)).roles("ADMIN").build(),
                 User.withUsername("operator").password(passwordEncoder.encode(operatorPassword)).roles("OPERATOR").build(),

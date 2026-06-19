@@ -16,7 +16,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health
   endpoint:
     health:
       probes:
@@ -24,6 +24,6 @@ management:
 
 asset-access:
   demo:
-    admin-password: ${ASSET_ACCESS_ADMIN_PASSWORD:demo-admin-change-me}
-    operator-password: ${ASSET_ACCESS_OPERATOR_PASSWORD:demo-operator-change-me}
-    viewer-password: ${ASSET_ACCESS_VIEWER_PASSWORD:demo-viewer-change-me}
+    admin-password: ${ASSET_ACCESS_ADMIN_PASSWORD:}
+    operator-password: ${ASSET_ACCESS_OPERATOR_PASSWORD:}
+    viewer-password: ${ASSET_ACCESS_VIEWER_PASSWORD:}

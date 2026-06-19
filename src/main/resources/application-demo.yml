@@ -1,0 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: demo
+
+asset-access:
+  demo:
+    admin-password: demo-admin-change-me
+    operator-password: demo-operator-change-me
+    viewer-password: demo-viewer-change-me

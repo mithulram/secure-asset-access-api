@@ -1,6 +1,6 @@
 # Secure Asset Access API
 
-A production-style Java backend demonstrator for managing classified technical assets, access grants, and security-relevant audit events. The API uses Spring Boot, Spring Security, JPA, H2, validation, role-based authorization, and actuator health checks.
+A production-style Java backend demonstrator for managing classified technical assets, recording named access grants for audit purposes, and persisting security-relevant audit events. The API uses Spring Boot, Spring Security, JPA, H2, validation, role-based endpoint authorization, and actuator health checks.
 
 > **Scope note:** This is a portfolio project. It demonstrates secure API design and testing patterns, but it is not a complete identity platform or a production deployment. The H2 database is deliberately local and ephemeral.
 
@@ -10,7 +10,7 @@ A production-style Java backend demonstrator for managing classified technical a
 
 - Create `INTERNAL` or `RESTRICTED` technical assets.
 - Enforce distinct `ADMIN`, `OPERATOR`, and `VIEWER` roles through Spring Security HTTP Basic authentication.
-- Allow administrators to create `VIEW` or `OPERATE` grants for a named principal.
+- Allow administrators to record `VIEW` or `OPERATE` grants for a named principal in an **asset grant registry** (recording and audit only; grant evaluation against callers is intentionally out of scope).
 - Persist asset creation and access-grant actions as audit events.
 - Return RFC 9457-style problem details for unknown assets.
 - Expose a public health endpoint at `/actuator/health`; all business endpoints require authentication.
@@ -23,25 +23,25 @@ Requirements: Java 21+ and Maven 3.6.3+.
 ```bash
 git clone https://github.com/mithulram/secure-asset-access-api.git
 cd secure-asset-access-api
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=demo
 ```
 
 Visit [http://localhost:8080](http://localhost:8080) for the API dashboard. The dashboard checks the live actuator health endpoint.
 
-The default credentials are intentionally obvious, local-only demo values:
+The **demo profile** supplies known local-only credentials for portfolio use:
 
-| Username | Role | Default password |
+| Username | Role | Demo profile password |
 |---|---|---|
 | `admin` | `ADMIN` | `demo-admin-change-me` |
 | `operator` | `OPERATOR` | `demo-operator-change-me` |
 | `viewer` | `VIEWER` | `demo-viewer-change-me` |
 
-Override them before any non-local use:
+Outside the demo profile, the application refuses to start until explicit secrets are provided and rejects the known demo passwords:
 
 ```bash
-export ASSET_ACCESS_ADMIN_PASSWORD='use-a-local-secret'
-export ASSET_ACCESS_OPERATOR_PASSWORD='use-a-local-secret'
-export ASSET_ACCESS_VIEWER_PASSWORD='use-a-local-secret'
+cp .env.example .env
+# edit .env with local-only secrets, then:
+export $(grep -v '^#' .env | xargs)
 mvn spring-boot:run
 ```
 
@@ -94,7 +94,7 @@ The integration suite validates public health access, unauthenticated rejection,
 ## Design notes
 
 - **Authentication:** HTTP Basic is suitable for a compact local demonstrator, not a modern production SSO strategy. A production version would use an OIDC provider, short-lived tokens, secret management, and transport-level controls.
-- **Authorization:** Route-level role checks establish a clear, testable contract. The project records asset-level grants, while an extension could enforce those grants against an enterprise identity directory.
+- **Authorization:** Route-level role checks establish a clear, testable contract. The project records asset-level grants in a grant registry for audit and review; runtime grant evaluation against enterprise identities is intentionally out of scope for this demonstrator.
 - **Persistence:** H2 keeps a fresh clone runnable. A production profile should substitute a managed PostgreSQL database and migrations.
 - **Auditability:** Events record actor, action, target, and timestamp. For tamper resistance in production, audit events would be forwarded to a separate append-only logging system.
 
