@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: secure-asset-access-api
+  datasource:
+    url: jdbc:h2:mem:assetaccess;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+  jackson:
+    default-property-inclusion: non_null
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+asset-access:
+  demo:
+    admin-password: ${ASSET_ACCESS_ADMIN_PASSWORD:demo-admin-change-me}
+    operator-password: ${ASSET_ACCESS_OPERATOR_PASSWORD:demo-operator-change-me}
+    viewer-password: ${ASSET_ACCESS_VIEWER_PASSWORD:demo-viewer-change-me}
