@@ -4,3 +4,9 @@ target/
 *.iml
 .DS_Store
 artifacts/
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
